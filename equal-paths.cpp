@@ -29,13 +29,28 @@ bool checkDepth(Node* node, int& depth)
         return true; 
     }
 
+
     int leftDepth = 0, rightDepth = 0;
     bool leftEqual = checkDepth(node->left, leftDepth);
     bool rightEqual = checkDepth(node->right, rightDepth);
 
-    if (!leftEqual || !rightEqual || leftDepth != rightDepth)
-    {
+    if (!leftEqual || !rightEqual) { //left and right subtrees meet check
         return false;
+    }
+
+    // If one child exists, use its depth
+    if (node->left == nullptr) {
+        depth = rightDepth + 1;
+        return true;
+    }
+    if (node->right == nullptr) {
+        depth = leftDepth + 1;
+        return true;
+    }
+
+    //2 children
+    if (leftDepth != rightDepth){
+      return false; 
     }
 
     //update depth by reference
