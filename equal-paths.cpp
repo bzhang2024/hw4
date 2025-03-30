@@ -8,11 +8,39 @@ using namespace std;
 
 
 // You may add any prototypes of helper functions here
-
+bool checkDepth(Node* node, int& depth);
 
 bool equalPaths(Node * root)
 {
-    // Add your code below
+    int depth = 0;
+    return checkDepth(root, depth);
+}
+
+bool checkDepth(Node* node, int& depth)
+{
+    if (node == nullptr)
+    {
+        depth = 0; //empty tree
+        return true;
+    }
+    if (node->left == nullptr && node->right == nullptr) //leaf node
+    {
+        depth = 1;
+        return true; 
+    }
+
+    int leftDepth = 0, rightDepth = 0;
+    bool leftEqual = checkDepth(node->left, leftDepth);
+    bool rightEqual = checkDepth(node->right, rightDepth);
+
+    if (!leftEqual || !rightEqual || leftDepth != rightDepth)
+    {
+        return false;
+    }
+
+    //update depth by reference
+    depth = leftDepth + 1; //depth of current node 
+    return true; 
 
 }
 
