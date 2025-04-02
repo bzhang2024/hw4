@@ -11,7 +11,10 @@ int main(int argc, char *argv[])
     // Binary Search Tree tests
     BinarySearchTree<char,int> bt;
     bt.insert(std::make_pair('a',1));
+    bt.print(); 
+
     bt.insert(std::make_pair('b',2));
+    bt.print(); 
     
     cout << "Binary Search Tree contents:" << endl;
     for(BinarySearchTree<char,int>::iterator it = bt.begin(); it != bt.end(); ++it) {
@@ -44,5 +47,5 @@ int main(int argc, char *argv[])
     cout << "Erasing b" << endl;
     at.remove('b');
 
-    return 0;
+    return 0; 
 }
