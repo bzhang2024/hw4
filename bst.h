@@ -563,15 +563,23 @@ void BinarySearchTree<Key, Value>::remove(const Key& key)
     else {
       child = nodeToRemove->getRight(); //could potentially be nullptr
     }
+    //child->setParent(nodeToRemove.getParent()); 
 
     //update parent/child pointers
     Node<Key, Value>* parent = nodeToRemove->getParent(); 
-    if (parent->getLeft() == nodeToRemove){
-      parent->setLeft(child); //promote child
+    //check for case where nodeToRemove has no parent i.e. root
+    if (parent == nullptr){
+        root_ = child; // remove root
     }
     else {
-      parent->setRight(child);
+      if (parent->getLeft() == nodeToRemove){
+        parent->setLeft(child); //promote child
+      }
+      else {
+        parent->setRight(child);
+      }
     }
+    
     if (child != nullptr){
       child->setParent(parent);
     }
