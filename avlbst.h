@@ -381,87 +381,96 @@ void AVLTree<Key, Value>:: removeFix(AVLNode<Key, Value>* node, int diff){
   }
   AVLNode<Key, Value>* parent = node->getParent();
 
-  if (parent == nullptr){
-    return;
-  }
-
-
-  int nextdiff = -1;  
-  if (parent->getLeft() == node){
-    nextdiff = 1;
-  }
-  //ndiff stays -1 if right child
-
-  if (node->getBalance() + diff == 0){
-    node->setBalance(0);
-    removeFix(parent, nextdiff); //RECURSE
-  }
-  else if (node->getBalance() + diff == 1){
-    node->setBalance(1);
-  }
-  else if (node->getBalance() + diff == -1){
-    node->setBalance(-1);
-  }
-  //left child taller
-  else if (node->getBalance() + diff == -2){
-    AVLNode<Key, Value>* child = node->getLeft(); //taller of the 2 children
-    
-    if (child->getBalance() == -1){ //zigzig
-      rotateRight(node);
-      node->setBalance(0); child->setBalance(0);
-      removeFix(parent, nextdiff); //RECURSE up the ancestor chain
+  int nextdiff = 0;  
+  if (parent != nullptr){
+    if (parent->getLeft() == node){
+      nextdiff = 1;
     }
-    else if (child->getBalance() == 0){ //zigzig w 2 nodes
-      rotateRight(node);
-      node->setBalance(-1); child->setBalance(1);
+    else {
+      nextdiff = -1; //node is right of parent
     }
-    else { //cbal = 1, zigzag
-      AVLNode<Key, Value>* gchild = child->getRight(); 
-      rotateLeft(child);
-      rotateRight(node);
-      switch (gchild->getBalance()){
-        case 1:
-          node->setBalance(0); child->setBalance(-1); gchild->setBalance(0);
-          break;
-        case 0:
-          node->setBalance(0); child->setBalance(0); gchild->setBalance(0);
-          break;
-        case -1:
-          node->setBalance(1); child->setBalance(0); gchild->setBalance(0);
-          break;
-      }
+  }
+
+  if (diff == -1){
+    if (node->getBalance() + diff == 0){
+      node->setBalance(0);
       removeFix(parent, nextdiff); //RECURSE
+    }
+    else if (node->getBalance() + diff == -1){
+      node->setBalance(-1);
+      return;
+    }
+    //left child taller
+    else if (node->getBalance() + diff == -2){
+      AVLNode<Key, Value>* child = node->getLeft(); //taller of the 2 children
+      
+      if (child->getBalance() == -1){ //zigzig
+        rotateRight(node);
+        node->setBalance(0); child->setBalance(0);
+        removeFix(parent, nextdiff); //RECURSE up the ancestor chain
+      }
+      else if (child->getBalance() == 0){ //zigzig w 2 nodes
+        rotateRight(node);
+        node->setBalance(-1); child->setBalance(1);
+      }
+      else if (child->getBalance() == 1) { //cbal = 1, zigzag
+        AVLNode<Key, Value>* gchild = child->getRight(); 
+        rotateLeft(child);
+        rotateRight(node);
+        switch (gchild->getBalance()){
+          case 1:
+            node->setBalance(0); child->setBalance(-1); gchild->setBalance(0);
+            break;
+          case 0:
+            node->setBalance(0); child->setBalance(0); gchild->setBalance(0);
+            break;
+          case -1:
+            node->setBalance(1); child->setBalance(0); gchild->setBalance(0);
+            break;
+        }
+        removeFix(parent, nextdiff); //RECURSE
+      }
     }
   }
   
-  //right child taller
-  if (node->getBalance() + diff == 2){
-    AVLNode<Key, Value>* child = node->getRight(); //taller of the 2 children
-    if (child->getBalance() == 1){ //zigzig
-      rotateLeft(node);
-      node->setBalance(0); child->setBalance(0);
+  else if (diff == 1){
+    if (node->getBalance() + diff == 0){
+      node->setBalance(0);
       removeFix(parent, nextdiff); //RECURSE
     }
-    else if (child->getBalance() == 0){ //zigzig w 2 nodes
-      rotateLeft(node);
-      node->setBalance(1); child->setBalance(-1);
+    else if (node->getBalance() + diff == 1){
+      node->setBalance(1);
+      return;
     }
-    else { //cbal = -1, zigzag
-      AVLNode<Key, Value>* gchild = child->getLeft(); 
-      rotateRight(child);
-      rotateLeft(node);
-      switch (gchild->getBalance()){
-        case -1:
-          node->setBalance(0); child->setBalance(1); gchild->setBalance(0);
-          break;
-        case 0:
-          node->setBalance(0); child->setBalance(0); gchild->setBalance(0);
-          break;
-        case 1:
-          node->setBalance(-1); child->setBalance(0); gchild->setBalance(0);
-          break;
+    //right child taller
+    else if (node->getBalance() + diff == 2){
+      AVLNode<Key, Value>* child = node->getRight(); //taller of the 2 children
+      if (child->getBalance() == 1){ //zigzig
+        rotateLeft(node);
+        node->setBalance(0); child->setBalance(0);
+        removeFix(parent, nextdiff); //RECURSE
       }
-      removeFix(parent, nextdiff);
+      else if (child->getBalance() == 0){ //zigzig w 2 nodes
+        rotateLeft(node);
+        node->setBalance(1); child->setBalance(-1);
+      }
+      else { //cbal = -1, zigzag
+        AVLNode<Key, Value>* gchild = child->getLeft(); 
+        rotateRight(child);
+        rotateLeft(node);
+        switch (gchild->getBalance()){
+          case -1:
+            node->setBalance(0); child->setBalance(1); gchild->setBalance(0);
+            break;
+          case 0:
+            node->setBalance(0); child->setBalance(0); gchild->setBalance(0);
+            break;
+          case 1:
+            node->setBalance(-1); child->setBalance(0); gchild->setBalance(0);
+            break;
+        }
+        removeFix(parent, nextdiff);
+      }
     }
   }
 }
